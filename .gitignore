@@ -1,0 +1,76 @@
+# Modified 2026-09-28 — comments updated for this deployment: the checkpoint note
+# is aligned with the MOPD weights and the local-artefact coverage was extended;
+# derived from MiaAI-Lab/MiMo-V2.6-Flash-2x-DGX-Sparks (AGPL-3.0). See LICENSE
+# and the "License & attribution" section of README.md.
+#
+# ─── local configuration ─────────────────────────────────────────────────────
+# .env holds this fleet's IPs, ssh user and paths. .env.example is the tracked
+# template that start.sh copies from on first run.
+.env
+!.env.example
+
+# ─── runtime state, per-fleet and not portable ───────────────────────────────
+state/
+logs/
+bench/results/
+# One-off migration scripts and per-machine backups from the RL -> MOPD switch;
+# never part of the published kit.
+upgrade-mopd/
+
+# ─── secrets ─────────────────────────────────────────────────────────────────
+*.pem
+*.key
+api-key
+*.token
+
+# ─── model weights: never in git ─────────────────────────────────────────────
+# The checkpoint is ~165.6 GiB. It lives at $MODEL_DIR and is fetched with
+# `./start.sh download` / `download-ms.sh` from the pinned ModelScope revision.
+models/
+*.safetensors
+*.bin
+*.pt
+*.gguf
+*.npz
+
+# ─── docker / image transfer artifacts ───────────────────────────────────────
+# `./start.sh build` pipes `docker save` straight over ssh, but a manual
+# save lands a multi-GB tarball here.
+*.tar
+*.tar.gz
+*.tgz
+*.bundle
+
+# ─── profiling and capture output ────────────────────────────────────────────
+trace*.json
+*.json.gz
+*.nsys-rep
+*.qdrep
+*.sqlite
+
+# ─── python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+
+# ─── editors and OS ──────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ─── scratch ─────────────────────────────────────────────────────────────────
+tmp/
+scratch/
+*.orig
+*.rej
+*.bak
+*.bak-*
