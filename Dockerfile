@@ -12,13 +12,15 @@
 ARG BASE_IMAGE=lmsysorg/sglang:nightly-dev-cu13-20260921-0f6761b5
 FROM ${BASE_IMAGE}
 ARG BASE_IMAGE
+# Optional build-time mirror for the one pip install below (restricted networks).
+ARG PIP_INDEX_URL=https://pypi.org/simple/
 LABEL mimo26.base="${BASE_IMAGE}"
 # Image, video, and audio. The MiMo processor decodes audio with torchcodec
 # and shells out to ffprobe for video.
 RUN apt-get update \
  && apt-get install -y --no-install-recommends ffmpeg \
  && rm -rf /var/lib/apt/lists/* \
- && pip install --no-cache-dir torchcodec \
+ && pip install --no-cache-dir --index-url "${PIP_INDEX_URL}" torchcodec \
  && python3 -c "import torchaudio; from torchcodec.decoders import AudioDecoder; import shutil; assert shutil.which('ffprobe'), 'ffprobe missing'"
 WORKDIR /opt/mimo26
 COPY boot.py /opt/mimo26/boot.py
