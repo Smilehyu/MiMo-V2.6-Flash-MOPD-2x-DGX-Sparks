@@ -518,7 +518,10 @@ sync_recipe() {
 
 cmd_build() {
   info "=== build $IMAGE from $ROOT (base $BASE_IMAGE) ==="
-  docker build --build-arg "BASE_IMAGE=$BASE_IMAGE" -t "$IMAGE" "$ROOT"
+  docker build --build-arg "BASE_IMAGE=$BASE_IMAGE" \
+    --build-arg "PIP_INDEX_URL=${PIP_INDEX_URL:-https://pypi.org/simple/}" \
+    --build-arg "APK_MIRROR=${APK_MIRROR:-dl-cdn.alpinelinux.org}" \
+    -t "$IMAGE" "$ROOT"
   image_current_local || die "built image does not carry label mimo26.base=$BASE_IMAGE"
   local h
   sync_recipe

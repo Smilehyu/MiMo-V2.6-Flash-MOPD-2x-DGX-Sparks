@@ -109,7 +109,8 @@ nfs_ensure_server() {
   [[ -d "$MODEL_DIR" ]] || die "checkpoint missing: $MODEL_DIR"
 
   info "building NFS image $NFS_IMAGE"
-  docker build -q -t "$NFS_IMAGE" "$NFS_DOCKERFILE_DIR" >/dev/null
+  docker build -q --build-arg "APK_MIRROR=${APK_MIRROR:-dl-cdn.alpinelinux.org}" \
+    -t "$NFS_IMAGE" "$NFS_DOCKERFILE_DIR" >/dev/null
   docker rm -f "$NFS_CONTAINER" >/dev/null 2>&1 || true
   info "exporting $MODEL_DIR via NFS (clients: $clients)"
   docker run -d --name "$NFS_CONTAINER" --restart unless-stopped \
